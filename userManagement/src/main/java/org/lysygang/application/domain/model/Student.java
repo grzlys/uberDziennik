@@ -1,4 +1,5 @@
 package org.lysygang.application.domain.model;
 
-public class Student {
+public record Student(int id, String firstName, String lastName) {
+
 }
