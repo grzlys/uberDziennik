@@ -1,9 +1,6 @@
 package org.lysygang.adapter.out.persistence.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,14 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Table(name = "student")
 public class Student {
 
     @Id
-    // TODO find solution for sequence. see here https://stackoverflow.com/questions/44962937/sequence-does-not-exist-when-it-does-postgres-spring-boot for start
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_id_seq")
+    @SequenceGenerator(name = "student_id_seq", allocationSize = 1)
     private Integer id;
 
+    @Column(name = "firstname")
     private String firstName;
+
+    @Column(name = "lastname")
     private String lastName;
 
 
