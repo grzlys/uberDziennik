@@ -3,12 +3,12 @@ package org.lysygang.application.domain.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lysygang.adapter.out.persistence.repository.StudentPersistenceAdapter;
-import org.lysygang.application.port.in.AddStudent;
+import org.lysygang.application.port.in.AddStudentUseCase;
 import org.lysygang.application.port.in.AddStudentCommand;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AddStudentService implements AddStudent {
+public class AddStudentService implements AddStudentUseCase {
 
     private final StudentPersistenceAdapter studentPersistenceAdapter;
 

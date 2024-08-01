@@ -1,6 +1,6 @@
 package org.lysygang.application.port.in;
 
-public interface AddStudent {
+public interface AddStudentUseCase {
 
     int addNewStudent(AddStudentCommand command);
 
