@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServiceConfig {
 
-//    @Bean
-//    public StudentPersistenceAdapter studentPersistenceAdapter(StudentRepository studentRepository) {
-//        return new StudentPersistenceAdapter(studentRepository);
-//    }
+    @Bean
+    public StudentPersistenceAdapter studentPersistenceAdapter(StudentRepository studentRepository) {
+        return new StudentPersistenceAdapter(studentRepository);
+    }
 
     @Bean
     public AddStudentService addStudentService(StudentPersistenceAdapter studentPersistenceAdapter){
