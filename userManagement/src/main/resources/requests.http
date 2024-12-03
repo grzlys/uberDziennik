@@ -1,0 +1,14 @@
+POST http://localhost:8080/student/add
+Content-Type: application/json
+
+{
+  "firstName": "Warunkumarek",
+  "lastName": "Chujokodzancy"
+}
+
+
+###
+POST http://localhost:8080/students/add
+Content-Type: application/json
+
+< input.csv
