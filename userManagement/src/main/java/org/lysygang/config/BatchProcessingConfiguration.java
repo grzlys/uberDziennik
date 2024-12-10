@@ -1,6 +1,6 @@
 package org.lysygang.config;
 
-import org.lysygang.adapter.out.persistence.repository.StudentRepository;
+import org.lysygang.adapter.out.persistence.repository.StudentPersistenceAdapter;
 import org.lysygang.application.domain.model.Student;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,10 +15,7 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.sql.DataSource;
 
 @Configuration
 public class BatchProcessingConfiguration {
@@ -39,10 +36,9 @@ public class BatchProcessingConfiguration {
         return new StudentConverter();
     }
 
-    // TODO what if introduce JpaWriter?
     @Bean
-    public ItemWriter<org.lysygang.adapter.out.persistence.entity.Student> writer(StudentRepository repository) {
-        return new CustomStudentItemWriter(repository);
+    public ItemWriter<org.lysygang.adapter.out.persistence.entity.Student> writer(StudentPersistenceAdapter studentPersistenceAdapter) {
+        return new CustomStudentItemWriter(studentPersistenceAdapter);
     }
 
     // job definition
@@ -59,7 +55,7 @@ public class BatchProcessingConfiguration {
                                   ItemReader<Student> reader,
                                   ItemProcessor<? super Student, ? extends org.lysygang.adapter.out.persistence.entity.Student> studentConverter,
                                   ItemWriter<org.lysygang.adapter.out.persistence.entity.Student> writer,
-                                  DataSourceTransactionManager transactionManager) {
+                                  PlatformTransactionManager transactionManager) {
         return new StepBuilder("importStudentStep", jobRepository)
                 .<Student, org.lysygang.adapter.out.persistence.entity.Student>chunk(3, transactionManager)
                 .reader(reader)
@@ -67,11 +63,6 @@ public class BatchProcessingConfiguration {
                 .writer(writer)
                 .allowStartIfComplete(true) // maybe wiping out batch job tables can make to delete this line of code
                 .build();
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
     }
 
 }
