@@ -1,13 +1,12 @@
 package org.lysygang.config;
 
 import org.lysygang.adapter.out.persistence.repository.StudentPersistenceAdapter;
-import org.lysygang.application.domain.model.Student;
+import org.lysygang.application.port.in.AddStudentCommand;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -21,23 +20,18 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class BatchProcessingConfiguration {
 
     @Bean
-    public FlatFileItemReader<Student> reader() {
-        return new FlatFileItemReaderBuilder<Student>()
+    public FlatFileItemReader<AddStudentCommand> reader() {
+        return new FlatFileItemReaderBuilder<AddStudentCommand>()
                 .name("studentItemReader")
                 .resource(new ClassPathResource("input.csv"))
                 .delimited()
-                .names("id","firstName", "lastName")
-                .targetType(Student.class) // todo replace to AddStudentCommand, it can help with no id in file
+                .names("firstName", "lastName")
+                .targetType(AddStudentCommand.class)
                 .build();
     }
 
     @Bean
-    public StudentConverter studentConverter() {
-        return new StudentConverter();
-    }
-
-    @Bean
-    public ItemWriter<org.lysygang.adapter.out.persistence.entity.Student> writer(StudentPersistenceAdapter studentPersistenceAdapter) {
+    public ItemWriter<AddStudentCommand> writer(StudentPersistenceAdapter studentPersistenceAdapter) {
         return new CustomStudentItemWriter(studentPersistenceAdapter);
     }
 
@@ -52,14 +46,12 @@ public class BatchProcessingConfiguration {
 
     @Bean
     public Step importStudentStep(JobRepository jobRepository,
-                                  ItemReader<Student> reader,
-                                  ItemProcessor<? super Student, ? extends org.lysygang.adapter.out.persistence.entity.Student> studentConverter,
-                                  ItemWriter<org.lysygang.adapter.out.persistence.entity.Student> writer,
+                                  ItemReader<AddStudentCommand> reader,
+                                  ItemWriter<AddStudentCommand> writer,
                                   PlatformTransactionManager transactionManager) {
         return new StepBuilder("importStudentStep", jobRepository)
-                .<Student, org.lysygang.adapter.out.persistence.entity.Student>chunk(3, transactionManager)
+                .<AddStudentCommand, AddStudentCommand>chunk(3, transactionManager)
                 .reader(reader)
-                .processor(studentConverter)
                 .writer(writer)
                 .allowStartIfComplete(true) // maybe wiping out batch job tables can make to delete this line of code
                 .build();
