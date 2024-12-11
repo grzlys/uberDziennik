@@ -13,5 +13,7 @@ spring:
     username: uberBelfer
     password: uczebnik
   batch:
+    job:
+      enabled: false
     jdbc:
       initialize-schema: always
