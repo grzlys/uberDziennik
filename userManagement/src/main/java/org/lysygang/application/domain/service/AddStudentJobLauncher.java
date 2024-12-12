@@ -21,16 +21,20 @@ public class AddStudentJobLauncher implements AddStudentByBatchLauncher {
     private final Job job;
 
     public void runJob(MultipartFile file) throws IOException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        // Zapisz plik tymczasowo lub przekaż jego ścieżkę jako parametr
-        String tempFilePath = STR."/tmp/\{file.getOriginalFilename()}";
-        file.transferTo(new java.io.File(tempFilePath));
-
-        // Uruchom job Spring Batch z parametrem ścieżki do pliku
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addString("filePath", tempFilePath)
-                .addLong("startTime", System.currentTimeMillis()) // Unikalny parametr dla uniknięcia problemów z cache
-                .toJobParameters();
-
+        var jobParameters = prepareJobParameters(storeFileAsTemp(file));
         jobLauncher.run(job, jobParameters);
+    }
+
+    private static String storeFileAsTemp(MultipartFile file) throws IOException {
+        var tempFilePath = STR."/tmp/\{file.getOriginalFilename()}";
+        file.transferTo(new java.io.File(tempFilePath));
+        return tempFilePath;
+    }
+
+    private static JobParameters prepareJobParameters(String tempFilePath) {
+        return new JobParametersBuilder()
+                .addString("filePath", tempFilePath)
+                .addLong("startTime", System.currentTimeMillis())
+                .toJobParameters();
     }
 }

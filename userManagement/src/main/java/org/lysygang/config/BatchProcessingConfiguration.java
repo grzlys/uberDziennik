@@ -46,8 +46,6 @@ public class BatchProcessingConfiguration {
         return new CustomStudentItemWriter(studentPersistenceAdapter);
     }
 
-    // job definition
-
     @Bean
     public Job importStudentJob(JobRepository jobRepository, Step importStudentStep) {
         return new JobBuilder("importStudentJob", jobRepository)
@@ -65,7 +63,7 @@ public class BatchProcessingConfiguration {
                 .listener(new FileReaderListener(restReader))
                 .reader(restReader)
                 .writer(writer)
-                .allowStartIfComplete(true) // maybe wiping out batch job tables can make to delete this line of code
+                .allowStartIfComplete(true)
                 .build();
     }
 

@@ -29,10 +29,10 @@ public class AddStudentController {
     public ResponseEntity<String> addStudents(@RequestBody MultipartFile file) {
         try {
             addstudentJobLauncher.runJob(file);
-            return ResponseEntity.ok("Job was executed successfully for file: " + file.getOriginalFilename());
+            return ResponseEntity.ok(STR."Job was executed successfully for file: \{file.getOriginalFilename()}");
         } catch (Exception ex) {
             log.error("Error during job execution:", ex);
-            return ResponseEntity.internalServerError().body("Error during job execution: " + ex.getMessage());
+            return ResponseEntity.internalServerError().body(STR."Error during job execution: \{ex.getMessage()}");
         }
     }
 

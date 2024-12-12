@@ -16,8 +16,7 @@ public class FileReaderListener {
 
     @BeforeStep
     public void beforeStep(StepExecution stepExecution) {
-        // Pobranie parametru `filePath` i ustawienie go w readerze
-        String filePath = stepExecution.getJobParameters().getString("filePath");
+        var filePath = stepExecution.getJobParameters().getString("filePath");
         reader.setResource(new FileSystemResource(filePath));
     }
 }
