@@ -9,6 +9,12 @@ Content-Type: application/json
 
 ###
 POST http://localhost:8080/students/add
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=boundary
 
-< input.csv
+--boundary
+Content-Disposition: form-data; name="file"; filename="input.csv"
+Content-Type: text/csv
+
+< ./input.csv
+--boundary
+
