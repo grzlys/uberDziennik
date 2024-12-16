@@ -2,13 +2,18 @@ package org.lysygang.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.lysygang.adapter.out.persistence.repository.StudentRepository;
+import org.lysygang.application.domain.service.AddStudentJobLauncher;
 import org.lysygang.application.domain.service.AddStudentService;
 import org.lysygang.application.port.in.AddStudentCommand;
+import org.lysygang.config.ServiceConfig;
+import org.lysygang.config.WebConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,8 +21,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@WebMvcTest(controllers = AddStudentController.class)
+@ContextConfiguration(classes = {ServiceConfig.class, WebConfig.class})
 class AddStudentControllerTest {
 
     @Autowired
@@ -25,6 +31,12 @@ class AddStudentControllerTest {
 
     @MockBean
     private AddStudentService willSaveStudent;
+
+    @MockBean
+    private AddStudentJobLauncher addstudentJobLauncher;
+
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Test
     void controllerShouldReturnCreatedStudentIdProvidedByService() throws Exception {
