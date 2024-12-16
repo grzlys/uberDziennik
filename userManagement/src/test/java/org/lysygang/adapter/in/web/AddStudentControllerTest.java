@@ -8,13 +8,16 @@ import org.lysygang.application.domain.service.AddStudentService;
 import org.lysygang.application.port.in.AddStudentCommand;
 import org.lysygang.config.ServiceConfig;
 import org.lysygang.config.WebConfig;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -54,6 +57,22 @@ class AddStudentControllerTest {
                 .andExpect(status().isOk()).andReturn();
 
         assertEquals(21, Integer.valueOf(mvcResult.getResponse().getContentAsString()));
+    }
+
+    @Test
+    void controllerShouldInvokeImportStudentJob() throws Exception {
+        //given
+        MockMultipartFile inputFile = new MockMultipartFile("file", "input.cvs", "text/plain", "inputFile".getBytes());
+
+        //when
+        mockMvc.perform(
+                MockMvcRequestBuilders.multipart("/students/add")
+                        .file(inputFile))
+                        .andExpect(status().isOk()
+        );
+
+        // then
+        Mockito.verify(addstudentJobLauncher).runJob(inputFile);
     }
 
     public static String asJsonString(final Object obj) {
